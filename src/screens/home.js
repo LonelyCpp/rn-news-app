@@ -6,12 +6,14 @@ import {
   ActivityIndicator,
   StatusBar,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  StyleSheet
 } from 'react-native';
 import { connect } from 'react-redux';
 import { fetchArticles } from '../actions';
 import NetWorkState from '../constants/NetWorkState';
 
+let styles;
 class HomeScreen extends Component {
   static navigationOptions = {
     title: 'Home',
@@ -25,14 +27,7 @@ class HomeScreen extends Component {
 
   render() {
     return (
-      <View
-        style={{
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: 20
-        }}
-      >
+      <View style={styles.container}>
         <StatusBar backgroundColor={'black'} />
         {this.props.articleNetworkState === NetWorkState.LOADING ? (
           <ActivityIndicator size='large' />
@@ -44,55 +39,22 @@ class HomeScreen extends Component {
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => this.navigateToArticle(item)}
-                style={{
-                  paddingBottom: 10,
-                  paddingTop: 10,
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  flex: 1
-                }}
+                style={styles.listItemContainer}
               >
                 <View style={{ flexGrow: 1, justifyContent: 'center' }}>
                   <View style={{ flexDirection: 'row' }}>
-                    <Text
-                      style={{
-                        flex: 1,
-                        flexWrap: 'wrap',
-                        fontSize: 18,
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {item.title}
-                    </Text>
+                    <Text style={styles.title}>{item.title}</Text>
                   </View>
-                  <Text style={{ fontSize: 14, marginTop: 5 }}>
-                    {item.author}
-                  </Text>
+                  <Text style={styles.author}>{item.author}</Text>
                 </View>
                 <Image
                   source={{ uri: item.urlToImage }}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    marginStart: 10,
-                    alignSelf: 'center'
-                  }}
+                  style={styles.articleImage}
                 />
               </TouchableOpacity>
             )}
             ListHeaderComponent={
-              <Text
-                style={{
-                  fontSize: 22,
-                  fontWeight: 'bold',
-                  paddingBottom: 10,
-                  borderBottomColor: '#00000050',
-                  borderBottomWidth: 1,
-                  marginBottom: 10
-                }}
-              >
-                Your Daily Read
-              </Text>
+              <Text style={styles.listHeader}>Your Daily Read</Text>
             }
           />
         )}
@@ -116,6 +78,43 @@ mapDispatchToProps = dispatch => {
     fetchArticles: () => dispatch(fetchArticles())
   };
 };
+
+styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20
+  },
+  listItemContainer: {
+    paddingBottom: 10,
+    paddingTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    flex: 1
+  },
+  title: {
+    flex: 1,
+    flexWrap: 'wrap',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  author: { fontSize: 14, marginTop: 5 },
+  articleImage: {
+    width: 80,
+    height: 80,
+    marginStart: 10,
+    alignSelf: 'center'
+  },
+  listHeader: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    paddingBottom: 10,
+    borderBottomColor: '#00000050',
+    borderBottomWidth: 1,
+    marginBottom: 10
+  }
+});
 
 export default connect(
   mapStateToProps,

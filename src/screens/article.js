@@ -1,18 +1,7 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  StatusBar,
-  Image,
-  Dimensions,
-  ScrollView
-} from 'react-native';
-import { connect } from 'react-redux';
-import { fetchArticles } from '../actions';
-import NetWorkState from '../constants/NetWorkState';
+import { Text, Image, Dimensions, ScrollView, StyleSheet } from 'react-native';
 
+let styles;
 export default class ArticleScreen extends Component {
   static navigationOptions = ({ navigation }) => {
     const { state } = navigation;
@@ -30,10 +19,8 @@ export default class ArticleScreen extends Component {
 
   render() {
     return (
-      <ScrollView style={{ margin: 20 }}>
-        <Text style={{ fontSize: 27, fontWeight: 'bold' }}>
-          {this.article.title}
-        </Text>
+      <ScrollView style={styles.container}>
+        <Text style={styles.title}>{this.article.title}</Text>
         <Text style={{ fontWeight: 'bold', marginTop: 10 }}>
           {this.article.author}{' '}
           <Text style={{ color: '#00000050' }}>
@@ -41,18 +28,24 @@ export default class ArticleScreen extends Component {
           </Text>
         </Text>
 
-        <Image
-          source={{ uri: this.article.urlToImage }}
-          style={{
-            width: this.WINDOW_WIDTH,
-            height: 200,
-            resizeMode: 'cover',
-            marginTop: 5,
-            marginBottom: 10
-          }}
-        />
-        <Text style={{ fontSize: 14 }}>{this.article.content}</Text>
+        <Image source={{ uri: this.article.urlToImage }} style={styles.image} />
+        <Text style={styles.content}>{this.article.content}</Text>
       </ScrollView>
     );
   }
 }
+
+styles = StyleSheet.create({
+  container: { margin: 20 },
+  title: { fontSize: 27, fontWeight: 'bold' },
+  author: { fontWeight: 'bold', marginTop: 10 },
+  date: { color: '#00000050' },
+  image: {
+    width: this.WINDOW_WIDTH,
+    height: 200,
+    resizeMode: 'cover',
+    marginTop: 5,
+    marginBottom: 10
+  },
+  content: { fontSize: 14 }
+});
