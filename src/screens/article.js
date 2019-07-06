@@ -18,16 +18,15 @@ export default class ArticleScreen extends Component {
   }
 
   render() {
+    const publishDate = new Date(this.article.publishedAt).toLocaleDateString(
+      'en-GB'
+    );
     return (
       <ScrollView style={styles.container}>
         <Text style={styles.title}>{this.article.title}</Text>
-        <Text style={{ fontWeight: 'bold', marginTop: 10 }}>
-          {this.article.author}{' '}
-          <Text style={{ color: '#00000050' }}>
-            {new Date(this.article.publishedAt).toLocaleDateString('en-GB')}
-          </Text>
+        <Text style={styles.author}>
+          {this.article.author} <Text style={styles.date}>{publishDate}</Text>
         </Text>
-
         <Image source={{ uri: this.article.urlToImage }} style={styles.image} />
         <Text style={styles.content}>{this.article.content}</Text>
       </ScrollView>
@@ -47,5 +46,5 @@ styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10
   },
-  content: { fontSize: 14 }
+  content: { fontSize: 18, lineHeight: 25 }
 });
