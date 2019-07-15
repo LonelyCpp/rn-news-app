@@ -2,13 +2,16 @@ import {
   ARTICLES_LOADING,
   ARTICLES_LOAD_COMPLETE,
   ARTICLES_LOAD_FAILED,
-  STORE_ARTICLES
+  STORE_ARTICLES,
+  STORE_FLITERED_ARTICLES,
+  CLEAR_FLITERED_ARTICLES
 } from '../actions/home';
 import { NetWorkState } from '../constants';
 
 const INITIAL_STATE = {
   networkState: NetWorkState.EMPTY,
-  articles: []
+  articles: [],
+  filteredAtricles: []
 };
 
 export const homeReducer = (state, action) => {
@@ -36,6 +39,16 @@ export const homeReducer = (state, action) => {
       return {
         ...state,
         networkState: NetWorkState.ERROR
+      };
+    case STORE_FLITERED_ARTICLES:
+      return {
+        ...state,
+        filteredAtricles: action.articles
+      };
+    case CLEAR_FLITERED_ARTICLES:
+      return {
+        ...state,
+        filteredAtricles: []
       };
   }
 
