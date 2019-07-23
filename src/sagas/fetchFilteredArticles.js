@@ -6,16 +6,13 @@ import {
   storeFilteredArticles
 } from '../actions';
 import NetWorkState from '../constants/NetWorkState';
+import { NewsApi } from '../api';
 
 export function* fetchFilteredArticles(action) {
   yield put(articlesNetworkStateChange(NetWorkState.LOADING));
   try {
-    const res = yield call(
-      axios.get,
-      `https://newsapi.org/v2/everything?q=${
-        action.query
-      }&from=2019-07-14&to=2019-07-14&sortBy=popularity&apiKey=9b64bcfe576047ba8e5bb7fd24c9e526`
-    );
+    api = new NewsApi();
+    const res = yield call(api.searchHeadlines, action.query);
     yield put(storeFilteredArticles(res.data.articles));
     yield put(articlesNetworkStateChange(NetWorkState.COMPLETE));
   } catch (error) {
