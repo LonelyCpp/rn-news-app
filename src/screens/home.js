@@ -6,61 +6,132 @@ import {
   ActivityIndicator,
   StatusBar,
   Image,
+  StyleSheet,
   TouchableOpacity,
-  StyleSheet
+  TextInput,
+  Keyboard
 } from 'react-native';
 import { connect } from 'react-redux';
-import { fetchArticles } from '../actions';
+import {
+  fetchArticles,
+  fetchFilteredArticles,
+  clearFilteredArticles
+} from '../actions';
 import NetWorkState from '../constants/NetWorkState';
+import ArticleListItem from '../components/ArticleListItem';
+
+import searchIcon from '../../assets/ic_search.png';
+import closeIcon from '../../assets/ic_close.png';
 
 let styles;
 class HomeScreen extends Component {
-  static navigationOptions = {
+  static navigationOptions = ({ navigation }) => ({
     title: 'Home',
     headerStyle: { backgroundColor: 'black' },
-    headerTitleStyle: { color: 'white' }
+    headerTitleStyle: { color: 'white' },
+    headerRight: (
+      <TouchableOpacity onPress={navigation.getParam('toggleSearch')}>
+        <Image
+          style={{ height: 20, width: 20, marginEnd: 20 }}
+          source={navigation.getParam('searchActive') ? closeIcon : searchIcon}
+        />
+      </TouchableOpacity>
+    )
+  });
+
+  state = {
+    searchActive: false,
+    searchQuery: ''
   };
 
   componentWillMount() {
     this.props.fetchArticles();
+    this.props.navigation.setParams({ toggleSearch: this.toggleSearch });
+    this.props.navigation.setParams({ searchActive: this.state.searchActive });
   }
+
+  toggleSearch = () => {
+    if (this.state.searchActive && this.state.searchQuery.length === 0) {
+      this.props.clearFilteredArticles();
+    }
+    this.setState({ searchActive: !this.state.searchActive });
+    this.props.navigation.setParams({ searchActive: !this.state.searchActive });
+  };
+
+  getFilteredArticles = () => {
+    Keyboard.dismiss();
+    this.props.fetchFilteredArticles(this.state.searchQuery);
+  };
+
+  getNewsListData = () => {
+    if (this.state.searchActive) {
+      return this.props.filteredArticles;
+    }
+    return this.props.articles;
+  };
 
   render() {
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor={'black'} />
+        {this.state.searchActive ? (
+          <View style={{ justifyContent: 'center' }}>
+            <TextInput
+              autoFocus
+              placeholder='Search Article'
+              borderBottomWidth={1}
+              borderBottomColor={'#00000050'}
+              style={{ marginBottom: 10 }}
+              value={this.state.searchQuery}
+              onChangeText={searchQuery => this.setState({ searchQuery })}
+              onSubmitEditing={this.getFilteredArticles}
+            />
+            <TouchableOpacity
+              style={styles.searchButton}
+              onPress={this.getFilteredArticles}
+            >
+              <Text>Search</Text>
+            </TouchableOpacity>
+          </View>
+        ) : null}
         {this.props.articleNetworkState === NetWorkState.LOADING ? (
           <ActivityIndicator size='large' />
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
-            data={this.props.articles}
+            extraData={this.state.searchQuery}
+            data={this.getNewsListData()}
             keyExtractor={(item, index) => String(index)}
             renderItem={({ item }) => (
-              <TouchableOpacity
-                onPress={() => this.navigateToArticle(item)}
-                style={styles.listItemContainer}
-              >
-                <View style={{ flexGrow: 1, justifyContent: 'center' }}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text style={styles.title}>{item.title}</Text>
-                  </View>
-                  <Text style={styles.author}>{item.author}</Text>
-                </View>
-                <Image
-                  source={{ uri: item.urlToImage }}
-                  style={styles.articleImage}
-                />
-              </TouchableOpacity>
+              <ArticleListItem
+                item={item}
+                onItemPress={this.navigateToArticle}
+              />
             )}
             ListHeaderComponent={
-              <Text style={styles.listHeader}>Your Daily Read</Text>
+              this.state.searchActive ? null : (
+                <View
+                  style={{
+                    borderBottomColor: '#00000050',
+                    borderBottomWidth: 1,
+                    marginBottom: 10
+                  }}
+                >
+                  <Text style={styles.listHeader}>Your Daily Read</Text>
+                </View>
+              )
+            }
+            ListEmptyComponent={
+              <Text style={{ fontSize: 18, opacity: 0.5 }}>
+                No search results to show
+              </Text>
             }
           />
         )}
       </View>
     );
   }
+
   navigateToArticle = article => {
     this.props.navigation.navigate('article', { article });
   };
@@ -69,50 +140,37 @@ class HomeScreen extends Component {
 mapStateToProps = state => {
   return {
     articleNetworkState: state.home.networkState,
-    articles: state.home.articles
+    articles: state.home.articles,
+    filteredArticles: state.home.filteredAtricles
   };
 };
 
 mapDispatchToProps = dispatch => {
   return {
-    fetchArticles: () => dispatch(fetchArticles())
+    fetchArticles: () => dispatch(fetchArticles()),
+    fetchFilteredArticles: query => dispatch(fetchFilteredArticles(query)),
+    clearFilteredArticles: () => dispatch(clearFilteredArticles())
   };
 };
 
 styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20
-  },
-  listItemContainer: {
-    paddingBottom: 10,
-    paddingTop: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    flex: 1
-  },
-  title: {
-    flex: 1,
-    flexWrap: 'wrap',
-    fontSize: 18,
-    fontWeight: 'bold'
-  },
-  author: { fontSize: 14, marginTop: 5 },
-  articleImage: {
-    width: 80,
-    height: 80,
-    marginStart: 10,
-    alignSelf: 'center'
+    padding: 20,
+    paddingTop: 10
   },
   listHeader: {
     fontSize: 22,
     fontWeight: 'bold',
     paddingBottom: 10,
-    borderBottomColor: '#00000050',
-    borderBottomWidth: 1,
-    marginBottom: 10
+
+    marginBottom: 5,
+    marginTop: 10
+  },
+  searchButton: {
+    position: 'absolute',
+    right: 10,
+    paddingBottom: 15
   }
 });
 

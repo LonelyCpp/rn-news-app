@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, Image, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import newsPlaceholder from '../../assets/news_placeholder.png';
 
 let styles;
 export default class ArticleScreen extends Component {
@@ -15,6 +16,10 @@ export default class ArticleScreen extends Component {
     this.article = props.navigation.getParam('article', { title: 'Article' });
     props.navigation.setParams({ title: this.article.title });
     this.WINDOW_WIDTH = Dimensions.get('window').width;
+
+    this.state = {
+      imageLoadError: false
+    };
   }
 
   render() {
@@ -27,7 +32,13 @@ export default class ArticleScreen extends Component {
         <Text style={styles.author}>
           {this.article.author} <Text style={styles.date}>{publishDate}</Text>
         </Text>
-        <Image source={{ uri: this.article.urlToImage }} style={styles.image} />
+        {this.state.imageLoadError ? null : (
+          <Image
+            source={{ uri: this.article.urlToImage }}
+            style={styles.image}
+            onError={() => this.setState({ imageLoadError: true })}
+          />
+        )}
         <Text style={styles.content}>{this.article.content}</Text>
       </ScrollView>
     );

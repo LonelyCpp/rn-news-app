@@ -3,7 +3,11 @@ import {
   STORE_ARTICLES,
   ARTICLES_LOADING,
   ARTICLES_LOAD_FAILED,
-  ARTICLES_LOAD_COMPLETE
+  ARTICLES_LOAD_COMPLETE,
+  SEARCH_ARTICLES,
+  FETCH_FLITERED_ARTICLES,
+  STORE_FLITERED_ARTICLES,
+  CLEAR_FLITERED_ARTICLES
 } from './home';
 import NetWorkState from '../constants/NetWorkState';
 
@@ -37,4 +41,24 @@ export const articlesNetworkStateChange = articlesNetworkState => {
         type: ARTICLES_LOAD_COMPLETE
       };
   }
+};
+
+export const fetchFilteredArticles = query => {
+  return {
+    type: FETCH_FLITERED_ARTICLES,
+    query
+  };
+};
+
+export const storeFilteredArticles = articles => {
+  return {
+    type: STORE_FLITERED_ARTICLES,
+    articles
+  };
+};
+
+export const clearFilteredArticles = () => {
+  return {
+    type: CLEAR_FLITERED_ARTICLES
+  };
 };

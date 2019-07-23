@@ -10,6 +10,10 @@ const sagaMiddleWare = createSagaMiddleware();
 const store = createStore(rootReducer, applyMiddleware(sagaMiddleWare));
 sagaMiddleWare.run(rootSaga);
 
+XMLHttpRequest = GLOBAL.originalXMLHttpRequest
+  ? GLOBAL.originalXMLHttpRequest
+  : GLOBAL.XMLHttpRequest;
+
 export default class App extends Component {
   render() {
     return (
