@@ -78,7 +78,7 @@ class HomeScreen extends Component {
           <View style={{ justifyContent: 'center' }}>
             <TextInput
               autoFocus
-              placeholder="Search Article"
+              placeholder='Search Article'
               borderBottomWidth={1}
               borderBottomColor={'#00000050'}
               style={{ marginBottom: 10 }}
@@ -95,7 +95,7 @@ class HomeScreen extends Component {
           </View>
         ) : null}
         {this.props.articleNetworkState === NetWorkState.LOADING ? (
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size='large' />
         ) : (
           <FlatList
             showsVerticalScrollIndicator={false}
@@ -110,7 +110,15 @@ class HomeScreen extends Component {
             )}
             ListHeaderComponent={
               this.state.searchActive ? null : (
-                <Text style={styles.listHeader}>Your Daily Read</Text>
+                <View
+                  style={{
+                    borderBottomColor: '#00000050',
+                    borderBottomWidth: 1,
+                    marginBottom: 10
+                  }}
+                >
+                  <Text style={styles.listHeader}>Your Daily Read</Text>
+                </View>
               )
             }
             ListEmptyComponent={
@@ -155,9 +163,8 @@ styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: 'bold',
     paddingBottom: 10,
-    borderBottomColor: '#00000050',
-    borderBottomWidth: 1,
-    marginBottom: 10,
+
+    marginBottom: 5,
     marginTop: 10
   },
   searchButton: {

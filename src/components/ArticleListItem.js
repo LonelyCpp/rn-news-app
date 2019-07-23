@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import Moment from 'moment';
 
 let styles;
 
@@ -17,7 +18,11 @@ export default (ArticleListItem = props => {
         }}
       >
         <Text style={styles.title}>{props.item.title}</Text>
-        <Text styles={styles.author}>{props.item.author}</Text>
+        <Text style={styles.author}>
+          {Moment(props.item.publishedAt).fromNow()}
+          {' | '}
+          <Text>{props.item.source.name}</Text>
+        </Text>
       </View>
       <Image
         source={{ uri: props.item.urlToImage }}
@@ -38,11 +43,16 @@ styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold'
   },
-  author: { fontSize: 14, marginTop: 5 },
+  author: {
+    fontSize: 12,
+    color: 'grey',
+    marginTop: 5
+  },
   articleImage: {
     width: 80,
     height: 80,
     marginStart: 10,
-    alignSelf: 'center'
+    alignSelf: 'center',
+    borderRadius: 8
   }
 });
