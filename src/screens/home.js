@@ -41,7 +41,8 @@ class HomeScreen extends Component {
 
   state = {
     searchActive: false,
-    searchQuery: ''
+    searchQuery: '',
+    refreshing: false
   };
 
   componentWillMount() {
@@ -70,6 +71,16 @@ class HomeScreen extends Component {
     return this.props.articles;
   };
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (
+      prevProps.articleNetworkState === NetWorkState.LOADING &&
+      prevState.refreshing === true &&
+      this.props.articleNetworkState !== NetWorkState.LOADING
+    ) {
+      this.setState({ refreshing: false });
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -94,10 +105,13 @@ class HomeScreen extends Component {
             </TouchableOpacity>
           </View>
         ) : null}
-        {this.props.articleNetworkState === NetWorkState.LOADING ? (
+        {this.props.articleNetworkState === NetWorkState.LOADING &&
+        this.state.refreshing === false ? (
           <ActivityIndicator size='large' />
         ) : (
           <FlatList
+            refreshing={this.state.refreshing}
+            onRefresh={this.onRefresh}
             showsVerticalScrollIndicator={false}
             extraData={this.state.searchQuery}
             data={this.getNewsListData()}
@@ -123,7 +137,7 @@ class HomeScreen extends Component {
             }
             ListEmptyComponent={
               <Text style={{ fontSize: 18, opacity: 0.5 }}>
-                No search results to show
+                Nothing to show
               </Text>
             }
           />
@@ -134,6 +148,15 @@ class HomeScreen extends Component {
 
   navigateToArticle = article => {
     this.props.navigation.navigate('article', { article });
+  };
+
+  onRefresh = () => {
+    this.setState({ refreshing: true });
+    if (this.state.searchActive) {
+      this.props.fetchFilteredArticles(this.state.searchQuery);
+    } else {
+      this.props.fetchArticles();
+    }
   };
 }
 

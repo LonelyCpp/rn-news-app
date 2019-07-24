@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text, Image, Dimensions, ScrollView, StyleSheet } from 'react-native';
-import newsPlaceholder from '../../assets/news_placeholder.png';
 
 let styles;
 export default class ArticleScreen extends Component {
