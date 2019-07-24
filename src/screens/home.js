@@ -9,7 +9,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Keyboard
+  Keyboard,
+  Button
 } from 'react-native';
 import { connect } from 'react-redux';
 import {
@@ -71,6 +72,64 @@ class HomeScreen extends Component {
     return this.props.articles;
   };
 
+  renderContent = () => {
+    console.log('NetWorkState', this.props.articleNetworkState);
+    if (this.props.articleNetworkState === NetWorkState.ERROR) {
+      return (
+        <View>
+          <Text
+            style={{
+              opacity: 0.5,
+              color: 'black',
+              textAlign: 'center',
+              fontSize: 15
+            }}
+          >
+            We have trouble fetching data right now :(
+          </Text>
+          <Button title={'Retry'} onPress={() => this.onRefresh(false)} />
+        </View>
+      );
+    }
+
+    if (
+      this.props.articleNetworkState === NetWorkState.LOADING &&
+      this.state.refreshing === false
+    ) {
+      return <ActivityIndicator size='large' />;
+    }
+
+    return (
+      <FlatList
+        refreshing={this.state.refreshing}
+        onRefresh={this.onRefresh}
+        showsVerticalScrollIndicator={false}
+        extraData={this.state.searchQuery}
+        data={this.getNewsListData()}
+        keyExtractor={(item, index) => String(index)}
+        renderItem={({ item }) => (
+          <ArticleListItem item={item} onItemPress={this.navigateToArticle} />
+        )}
+        ListHeaderComponent={
+          this.state.searchActive ? null : (
+            <View
+              style={{
+                borderBottomColor: '#00000050',
+                borderBottomWidth: 1,
+                marginBottom: 10
+              }}
+            >
+              <Text style={styles.listHeader}>Your Daily Read</Text>
+            </View>
+          )
+        }
+        ListEmptyComponent={
+          <Text style={{ fontSize: 18, opacity: 0.5 }}>Nothing to show</Text>
+        }
+      />
+    );
+  };
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (
       prevProps.articleNetworkState === NetWorkState.LOADING &&
@@ -105,43 +164,7 @@ class HomeScreen extends Component {
             </TouchableOpacity>
           </View>
         ) : null}
-        {this.props.articleNetworkState === NetWorkState.LOADING &&
-        this.state.refreshing === false ? (
-          <ActivityIndicator size='large' />
-        ) : (
-          <FlatList
-            refreshing={this.state.refreshing}
-            onRefresh={this.onRefresh}
-            showsVerticalScrollIndicator={false}
-            extraData={this.state.searchQuery}
-            data={this.getNewsListData()}
-            keyExtractor={(item, index) => String(index)}
-            renderItem={({ item }) => (
-              <ArticleListItem
-                item={item}
-                onItemPress={this.navigateToArticle}
-              />
-            )}
-            ListHeaderComponent={
-              this.state.searchActive ? null : (
-                <View
-                  style={{
-                    borderBottomColor: '#00000050',
-                    borderBottomWidth: 1,
-                    marginBottom: 10
-                  }}
-                >
-                  <Text style={styles.listHeader}>Your Daily Read</Text>
-                </View>
-              )
-            }
-            ListEmptyComponent={
-              <Text style={{ fontSize: 18, opacity: 0.5 }}>
-                Nothing to show
-              </Text>
-            }
-          />
-        )}
+        {this.renderContent()}
       </View>
     );
   }
@@ -150,8 +173,10 @@ class HomeScreen extends Component {
     this.props.navigation.navigate('article', { article });
   };
 
-  onRefresh = () => {
-    this.setState({ refreshing: true });
+  onRefresh = (showIndicator = true) => {
+    if (showIndicator) {
+      this.setState({ refreshing: true });
+    }
     if (this.state.searchActive) {
       this.props.fetchFilteredArticles(this.state.searchQuery);
     } else {
