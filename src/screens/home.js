@@ -23,6 +23,7 @@ import ArticleListItem from '../components/ArticleListItem';
 
 import searchIcon from '../../assets/ic_search.png';
 import closeIcon from '../../assets/ic_close.png';
+import settingsIcon from '../../assets/ic_settings.png';
 
 let styles;
 class HomeScreen extends Component {
@@ -30,11 +31,19 @@ class HomeScreen extends Component {
     title: 'Home',
     headerStyle: { backgroundColor: 'black' },
     headerTitleStyle: { color: 'white' },
-    headerRight: (
+    headerLeft: (
       <TouchableOpacity onPress={navigation.getParam('toggleSearch')}>
         <Image
-          style={{ height: 20, width: 20, marginEnd: 20 }}
+          style={{ height: 20, width: 20, marginStart: 20 }}
           source={navigation.getParam('searchActive') ? closeIcon : searchIcon}
+        />
+      </TouchableOpacity>
+    ),
+    headerRight: (
+      <TouchableOpacity onPress={navigation.getParam('openSettings')}>
+        <Image
+          style={{ height: 20, width: 20, marginEnd: 20 }}
+          source={settingsIcon}
         />
       </TouchableOpacity>
     )
@@ -50,6 +59,7 @@ class HomeScreen extends Component {
     this.props.fetchArticles();
     this.props.navigation.setParams({ toggleSearch: this.toggleSearch });
     this.props.navigation.setParams({ searchActive: this.state.searchActive });
+    this.props.navigation.setParams({ openSettings: this.openSettings });
   }
 
   toggleSearch = () => {
@@ -70,6 +80,10 @@ class HomeScreen extends Component {
       return this.props.filteredArticles;
     }
     return this.props.articles;
+  };
+
+  openSettings = () => {
+    this.props.navigation.navigate('settings');
   };
 
   renderContent = () => {
