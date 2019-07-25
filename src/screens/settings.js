@@ -1,24 +1,30 @@
 import React, { Component } from 'react';
 import { View, Text, FlatList, TouchableOpacity } from 'react-native';
-import { COUNTRY_LIST } from '../constants';
+import { connect } from 'react-redux';
 
-export default class SettingsScreen extends Component {
+import { COUNTRY_LIST } from '../constants';
+import { setCountryCode } from '../actions';
+import { storeDataInDevice, DeviceStorageKeys } from '../utils';
+
+export class SettingsScreen extends Component {
   static navigationOptions = {
     title: 'Settings'
   };
   constructor(props) {
     super(props);
-    this.state = {
-      country: 'gb'
-    };
   }
 
-  onChangeCountry = country => {
-    this.setState({ country: country.key });
+  onChangeCountry = async country => {
+    try {
+      await storeDataInDevice(DeviceStorageKeys.countryCode, country.key);
+      this.props.setCountryCode(country.key);
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   renderCountryItem = country => {
-    const isSelected = this.state.country === country.key;
+    const isSelected = this.props.settings.countryCode === country.key;
     return (
       <TouchableOpacity
         style={{
@@ -49,7 +55,7 @@ export default class SettingsScreen extends Component {
           Country
         </Text>
         <FlatList
-          extraData={this.state.country}
+          extraData={this.props.settings.countryCode}
           data={COUNTRY_LIST}
           renderItem={({ item }) => this.renderCountryItem(item)}
         />
@@ -58,8 +64,19 @@ export default class SettingsScreen extends Component {
   }
 }
 
-/**
+mapStateToProps = state => {
+  return {
+    settings: state.settings
+  };
+};
 
+mapDispatchToProps = dispatch => {
+  return {
+    setCountryCode: code => dispatch(setCountryCode(code))
+  };
+};
 
-
- */
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SettingsScreen);

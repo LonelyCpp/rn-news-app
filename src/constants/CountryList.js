@@ -1,4 +1,5 @@
 export default [
+  { key: 'us', name: 'United States of America' },
   { key: 'ae', name: 'United Arab Emirates' },
   { key: 'ar', name: 'Argentina' },
   { key: 'at', name: 'Austria' },
@@ -15,7 +16,7 @@ export default [
   // { key: 'de', name: '' },
   // { key: 'eg', name: '' },
   // { key: 'fr', name: '' },
-  { key: 'gb', name: 'United Kingdom of Great Britain' },
+  { key: 'gb', name: 'United Kingdom of Great Britain' }
   // { key: 'gr', name: '' },
   // { key: 'hk', name: '' },
   // { key: 'hu', name: '' },
@@ -50,7 +51,6 @@ export default [
   // { key: 'tr', name: '' },
   // { key: 'tw', name: '' },
   // { key: 'ua', name: '' },
-  { key: 'us', name: 'United States of America' }
   // { key: 've', name: '' },
   // { key: 'za', name: '' }
 ];

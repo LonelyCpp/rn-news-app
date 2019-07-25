@@ -4,12 +4,12 @@ import {
   ARTICLES_LOADING,
   ARTICLES_LOAD_FAILED,
   ARTICLES_LOAD_COMPLETE,
-  SEARCH_ARTICLES,
   FETCH_FLITERED_ARTICLES,
   STORE_FLITERED_ARTICLES,
   CLEAR_FLITERED_ARTICLES
 } from './home';
 import NetWorkState from '../constants/NetWorkState';
+import { SET_COUNTRY_CODE } from './settings';
 
 export const fetchArticles = () => {
   return {
@@ -60,5 +60,12 @@ export const storeFilteredArticles = articles => {
 export const clearFilteredArticles = () => {
   return {
     type: CLEAR_FLITERED_ARTICLES
+  };
+};
+
+export const setCountryCode = code => {
+  return {
+    type: SET_COUNTRY_CODE,
+    code
   };
 };
