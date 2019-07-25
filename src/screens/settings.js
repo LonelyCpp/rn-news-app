@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { View, Text, FlatList, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet
+} from 'react-native';
 import { connect } from 'react-redux';
 
-import { COUNTRY_LIST } from '../constants';
+import { COUNTRY_LIST, STRINGS } from '../constants';
 import { setCountryCode } from '../actions';
 import { storeDataInDevice, DeviceStorageKeys } from '../utils';
 
+let styles;
+
 export class SettingsScreen extends Component {
   static navigationOptions = {
-    title: 'Settings'
+    title: STRINGS.SCREEN_NAMES.SETTINGS
   };
   constructor(props) {
     super(props);
@@ -27,23 +35,17 @@ export class SettingsScreen extends Component {
     const isSelected = this.props.settings.countryCode === country.key;
     return (
       <TouchableOpacity
-        style={{
-          padding: 10,
-          paddingStart: 0,
-          flexDirection: 'row',
-          justifyContent: 'space-between'
-        }}
+        style={styles.itemContainer}
         onPress={() => this.onChangeCountry(country)}
       >
         <Text
-          style={{
-            fontSize: 18,
-            fontWeight: isSelected ? 'bold' : null
-          }}
+          style={[styles.itemText, { fontWeight: isSelected ? 'bold' : null }]}
         >
           {country.name}
         </Text>
-        {isSelected ? <Text style={{ fontSize: 18 }}>👈</Text> : null}
+        {isSelected ? (
+          <Text style={{ fontSize: 18 }}>{STRINGS.EMOJI_POINT_LEFT}</Text>
+        ) : null}
       </TouchableOpacity>
     );
   };
@@ -51,9 +53,7 @@ export class SettingsScreen extends Component {
   render() {
     return (
       <View style={{ margin: 20 }}>
-        <Text style={{ fontWeight: 'bold', marginBottom: 5, opacity: 0.5 }}>
-          Country
-        </Text>
+        <Text style={styles.category}>{STRINGS.COUNTRY}</Text>
         <FlatList
           extraData={this.props.settings.countryCode}
           data={COUNTRY_LIST}
@@ -75,6 +75,23 @@ mapDispatchToProps = dispatch => {
     setCountryCode: code => dispatch(setCountryCode(code))
   };
 };
+
+styles = StyleSheet.create({
+  itemContainer: {
+    padding: 10,
+    paddingStart: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  },
+  itemText: {
+    fontSize: 18
+  },
+  category: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    opacity: 0.5
+  }
+});
 
 export default connect(
   mapStateToProps,

@@ -24,17 +24,18 @@ import ArticleListItem from '../components/ArticleListItem';
 import searchIcon from '../../assets/ic_search.png';
 import closeIcon from '../../assets/ic_close.png';
 import settingsIcon from '../../assets/ic_settings.png';
+import { STRINGS } from '../constants';
 
 let styles;
 class HomeScreen extends Component {
   static navigationOptions = ({ navigation }) => ({
-    title: 'Home',
-    headerStyle: { backgroundColor: 'black' },
-    headerTitleStyle: { color: 'white' },
+    title: STRINGS.SCREEN_NAMES.HOME,
+    headerStyle: styles.headerStyle,
+    headerTitleStyle: styles.headerTitleStyle,
     headerLeft: (
       <TouchableOpacity onPress={navigation.getParam('toggleSearch')}>
         <Image
-          style={{ height: 20, width: 20, marginStart: 20 }}
+          style={[styles.headerIcon, { marginStart: 20 }]}
           source={navigation.getParam('searchActive') ? closeIcon : searchIcon}
         />
       </TouchableOpacity>
@@ -42,7 +43,7 @@ class HomeScreen extends Component {
     headerRight: (
       <TouchableOpacity onPress={navigation.getParam('openSettings')}>
         <Image
-          style={{ height: 20, width: 20, marginEnd: 20 }}
+          style={[styles.headerIcon, { marginEnd: 20 }]}
           source={settingsIcon}
         />
       </TouchableOpacity>
@@ -91,17 +92,8 @@ class HomeScreen extends Component {
     if (this.props.articleNetworkState === NetWorkState.ERROR) {
       return (
         <View>
-          <Text
-            style={{
-              opacity: 0.5,
-              color: 'black',
-              textAlign: 'center',
-              fontSize: 15
-            }}
-          >
-            We have trouble fetching data right now :(
-          </Text>
-          <Button title={'Retry'} onPress={() => this.onRefresh(false)} />
+          <Text style={styles.errorText}>{STRINGS.NETWORk_ERROR_MSG}</Text>
+          <Button title={STRINGS.RETRY} onPress={() => this.onRefresh(false)} />
         </View>
       );
     }
@@ -126,19 +118,13 @@ class HomeScreen extends Component {
         )}
         ListHeaderComponent={
           this.state.searchActive ? null : (
-            <View
-              style={{
-                borderBottomColor: '#00000050',
-                borderBottomWidth: 1,
-                marginBottom: 10
-              }}
-            >
-              <Text style={styles.listHeader}>Your Daily Read</Text>
+            <View style={styles.listHeaderContainer}>
+              <Text style={styles.listHeader}>{STRINGS.DAILY_READS}</Text>
             </View>
           )
         }
         ListEmptyComponent={
-          <Text style={{ fontSize: 18, opacity: 0.5 }}>Nothing to show</Text>
+          <Text style={styles.emptyListMsg}>{STRINGS.LIST_EMPTY}</Text>
         }
       />
     );
@@ -174,7 +160,7 @@ class HomeScreen extends Component {
               style={styles.searchButton}
               onPress={this.getFilteredArticles}
             >
-              <Text>Search</Text>
+              <Text>{STRINGS.SEARCH}</Text>
             </TouchableOpacity>
           </View>
         ) : null}
@@ -233,6 +219,31 @@ styles = StyleSheet.create({
     position: 'absolute',
     right: 10,
     paddingBottom: 15
+  },
+  headerStyle: {
+    backgroundColor: 'black'
+  },
+  headerTitleStyle: {
+    color: 'white'
+  },
+  headerIcon: {
+    height: 20,
+    width: 20
+  },
+  errorText: {
+    opacity: 0.5,
+    color: 'black',
+    textAlign: 'center',
+    fontSize: 15
+  },
+  listHeaderContainer: {
+    borderBottomColor: '#00000050',
+    borderBottomWidth: 1,
+    marginBottom: 10
+  },
+  emptyListMsg: {
+    fontSize: 18,
+    opacity: 0.5
   }
 });
 

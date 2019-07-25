@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Linking
 } from 'react-native';
+import { STRINGS } from '../constants';
 
 let styles;
 export default class ArticleScreen extends Component {
@@ -51,10 +52,10 @@ export default class ArticleScreen extends Component {
           {this.trimArticleText(this.article.content)}
         </Text>
         <Text
-          style={{ color: 'blue', fontWeight: 'bold', marginTop: 10 }}
+          style={styles.linkText}
           onPress={() => Linking.openURL(this.article.url)}
         >
-          Read Full Article 📰
+          {STRINGS.READ_FULL_ARTICLES}
         </Text>
       </ScrollView>
     );
@@ -62,10 +63,20 @@ export default class ArticleScreen extends Component {
 }
 
 styles = StyleSheet.create({
-  container: { margin: 20 },
-  title: { fontSize: 27, fontWeight: 'bold' },
-  author: { fontWeight: 'bold', marginTop: 10 },
-  date: { color: '#00000050' },
+  container: {
+    margin: 20
+  },
+  title: {
+    fontSize: 27,
+    fontWeight: 'bold'
+  },
+  author: {
+    fontWeight: 'bold',
+    marginTop: 10
+  },
+  date: {
+    color: '#00000050'
+  },
   image: {
     width: this.WINDOW_WIDTH,
     height: 200,
@@ -73,5 +84,13 @@ styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10
   },
-  content: { fontSize: 18, lineHeight: 25 }
+  content: {
+    fontSize: 18,
+    lineHeight: 25
+  },
+  linkText: {
+    color: 'blue',
+    fontWeight: 'bold',
+    marginTop: 10
+  }
 });
