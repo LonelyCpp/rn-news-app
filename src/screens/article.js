@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
-import { Text, Image, Dimensions, ScrollView, StyleSheet } from 'react-native';
+import {
+  Text,
+  Image,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Linking
+} from 'react-native';
 
 let styles;
 export default class ArticleScreen extends Component {
-  static navigationOptions = ({ navigation }) => {
-    const { state } = navigation;
-    return {
-      title: `${state.params.title || 'Article'}`
-    };
-  };
-
   constructor(props) {
     super(props);
     this.article = props.navigation.getParam('article', { title: 'Article' });
-    props.navigation.setParams({ title: this.article.title });
     this.WINDOW_WIDTH = Dimensions.get('window').width;
 
     this.state = {
@@ -21,12 +20,22 @@ export default class ArticleScreen extends Component {
     };
   }
 
+  trimArticleText = text => {
+    try {
+      re = /\[\+\d+\schars\]/;
+      return text.replace(re, '');
+    } catch (e) {
+      console.log(e);
+      return text;
+    }
+  };
+
   render() {
     const publishDate = new Date(this.article.publishedAt).toLocaleDateString(
       'en-GB'
     );
     return (
-      <ScrollView style={styles.container}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
         <Text style={styles.title}>{this.article.title}</Text>
         <Text style={styles.author}>
           {this.article.author} <Text style={styles.date}>{publishDate}</Text>
@@ -38,7 +47,15 @@ export default class ArticleScreen extends Component {
             onError={() => this.setState({ imageLoadError: true })}
           />
         )}
-        <Text style={styles.content}>{this.article.content}</Text>
+        <Text style={styles.content}>
+          {this.trimArticleText(this.article.content)}
+        </Text>
+        <Text
+          style={{ color: 'blue', fontWeight: 'bold', marginTop: 10 }}
+          onPress={() => Linking.openURL(this.article.url)}
+        >
+          Read Full Article 📰
+        </Text>
       </ScrollView>
     );
   }
