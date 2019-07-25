@@ -30,6 +30,13 @@ Setup react native using the official documentation. [facebook.github.io](https:
 1.  clone the repository
 2.  run `npm install` in the repository directory
 
+### API key
+
+1. get an api key from https://newsapi.org/docs/get-started
+2. create a file called `key.js` in `/src/api`
+3. export the key as `NEWS_API_KEY`
+   eg: `export const NEWS_API_KEY = 'YOUR_KEY_HERE';`
+
 ### Build and Run
 
 `react-native run-ios`
